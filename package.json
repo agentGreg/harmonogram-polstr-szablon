@@ -1,0 +1,22 @@
+{
+  "name": "harmonogram-polstr",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kalkulator harmonogramu spłat kredytu hipotecznego na POLSTR 1M lub WIBOR 3M. Szablon startowy na projekt końcowy szkolenia.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/cli.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}
