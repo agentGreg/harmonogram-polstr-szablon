@@ -22,7 +22,12 @@ Załącznik: `dane/polstr-1m.json`, `dane/wibor-3m.json`.
 
 - tabela rat: numer, data, część kapitałowa, część odsetkowa, rata, saldo po spłacie,
 - suma odsetek za cały okres,
-- z CLI: JSON lub CSV.
+- z CLI: JSON lub CSV,
+- ekran www: formularz parametrów, przycisk „Policz”, rata pierwsza i ostatnia, suma odsetek, tabela rat, eksport CSV.
+
+### Ekran
+
+Wygląd ekranu projektujesz sam w Claude Design, w czasie gdy agent implementuje logikę (KARTA.md, tor równoległy). Eksport to jeden plik HTML z CSS i JS, bez frameworka, zapisany jako `ui/index.html`. Logikę podpina agent w fazie 4: mały serwer `src/server.ts` na `node:http` serwuje `ui/` i wystawia `GET /api/harmonogram` z parametrami z formularza, zwracając JSON z tabelą rat. Uruchomienie: `npm run ui`, adres http://localhost:4180. Bez nowych zależności. Obliczenia zostają w module domenowym, serwer tylko parsuje parametry i woła funkcję.
 
 ### Reguły
 

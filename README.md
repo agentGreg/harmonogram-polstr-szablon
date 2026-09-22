@@ -80,6 +80,7 @@ git push -u origin main
 | `npm test` | jednorazowe uruchomienie testów vitest |
 | `npm run test:watch` | testy w trybie obserwowania plików |
 | `npm run typecheck` | `tsc --noEmit`, sprawdzenie typów bez kompilacji |
+| `npm run ui` | po fazie 4: serwer `src/server.ts` z ekranem `ui/index.html` na http://localhost:4180 (skrypt dodaje agent w fazie 4) |
 | `npm start -- --help` | uruchomienie `src/cli.ts` przez tsx |
 
 ## Dane
