@@ -1,22 +1,34 @@
 # Harmonogram na POLSTR, szablon startowy
 
-Szablon repozytorium na projekt końcowy szkolenia z AI w cyklu wytwarzania oprogramowania (dzień 3). Cel projektu: kalkulator harmonogramu spłat kredytu hipotecznego ze zmiennym oprocentowaniem na POLSTR 1M lub WIBOR 3M, budowany od zera w TypeScript metodyką spec-kit z GitHub Copilotem.
+Szablon repozytorium na projekt końcowy szkolenia z AI w cyklu wytwarzania oprogramowania (dzień 3). Cel projektu: kalkulator harmonogramu spłat kredytu hipotecznego ze zmiennym oprocentowaniem na POLSTR 1M lub WIBOR 3M, budowany od zera w TypeScript i Next.js metodyką spec-kit z GitHub Copilotem, wdrażany z GitHuba na Vercel.
 
-Repozytorium zawiera zainicjalizowany spec-kit dla Copilota (skrypty PowerShell), szkielet Node/TypeScript z vitest, dane przykładowe wskaźników, workflow GitHub Actions, reguły review dla Copilota i skrypty rutyny review przez Copilot CLI. Nie zawiera implementacji, ta powstaje w trakcie dnia.
+Repozytorium zawiera zainicjalizowany spec-kit dla Copilota (skrypty PowerShell), szkielet Next.js (App Router, TypeScript, Tailwind) z pustym modułem domenowym i testami vitest, dane przykładowe wskaźników, workflow GitHub Actions, reguły review dla Copilota i skrypty rutyny review przez Copilot CLI. Nie zawiera implementacji, ta powstaje w trakcie dnia.
 
 Dokumenty do przeczytania na start:
 
 - [BRIEF.md](BRIEF.md), zgłoszenie z biznesu i zakres MVP
-- [KARTA.md](KARTA.md), karta uczestnika z bramkami, komendami i zasadą awaryjną
+- [KARTA.md](KARTA.md), karta uczestnika z bramkami, komendami, torem Claude Design, krokami Vercel i zasadami awaryjnymi
 - [AGENTS.md](AGENTS.md), konwencje projektu dla agenta
+
+## Struktura
+
+- `src/domena/harmonogram.ts`: czyste funkcje obliczeniowe, bez React i bez I/O. Tu trafia cała logika.
+- `src/dane/wskazniki.ts`: serie wskaźników zaimportowane z `dane/*.json`.
+- `app/api/harmonogram/route.ts`: `GET /api/harmonogram`, parsuje parametry z query string, woła domenę, zwraca JSON. Na razie odpowiada 501 „nie zaimplementowano” z przykładem parametrów.
+- `app/page.tsx`: strona główna. Tu wchodzi ekran z Claude Design.
+- `tests/`: testy vitest domeny i danych.
+- `dane/`: serie POLSTR 1M i WIBOR 3M.
+- `.github/`, `.specify/`: skille spec-kit, instrukcje review, workflow Actions.
+- `skrypty/`: rutyna review przez Copilot CLI.
 
 ## Wymagania
 
 - Windows 10 lub 11 z PowerShell 5.1 (wystarcza, pwsh nie jest potrzebny) albo Git Bash. macOS i Linux też działają.
-- Node.js 22 lub nowszy (`node --version`)
+- Node.js 22 do 26 (`node --version`)
 - git
 - GitHub CLI `gh` (`gh --version`). Jeśli brak: `winget install GitHub.cli`, potem zamknij terminal i otwórz nowy.
 - VS Code z rozszerzeniem GitHub Copilot
+- konto na github.com; konto Vercel powstaje w kroku 7 przez logowanie GitHubem
 - opcjonalnie GitHub Copilot CLI (`copilot --version`) do rutyny review z terminala
 
 Python ani uv nie są potrzebne, spec-kit jest już zainicjalizowany w repozytorium.
@@ -52,7 +64,7 @@ W PowerShell wpisuj komendy pojedynczo, jedna na linię (PowerShell 5.1 odrzuca 
    gh run list
    ```
 
-5. Zainstaluj zależności, uruchom testy i sprawdzenie typów:
+5. Zainstaluj zależności (Next.js waży więcej niż poprzednie szablony, `npm install` trwa 1 do 3 minut), uruchom testy i sprawdzenie typów:
 
    ```
    npm install
@@ -60,7 +72,15 @@ W PowerShell wpisuj komendy pojedynczo, jedna na linię (PowerShell 5.1 odrzuca 
    npm run typecheck
    ```
 
-6. Utwórz gałąź na artefakty spec-kit i przejdź do [KARTA.md](KARTA.md):
+6. Uruchom aplikację lokalnie i sprawdź w przeglądarce http://localhost:3000 oraz http://localhost:3000/api/harmonogram (501 „nie zaimplementowano” jest oczekiwane). Zatrzymaj serwer klawiszami Ctrl+C:
+
+   ```
+   npm run dev
+   ```
+
+7. Załóż konto Vercel logowaniem GitHubem, zaimportuj repo `harmonogram-polstr` i zrób pierwszy deploy. Pięć kroków z ekranami jest w [KARTA.md](KARTA.md), sekcja „Vercel krok po kroku”. Od tej chwili push do `main` to produkcja, a każdy PR ma adres podglądu.
+
+8. Utwórz gałąź na artefakty spec-kit i przejdź do [KARTA.md](KARTA.md):
 
    ```
    git switch -c spec-mvp
@@ -77,15 +97,17 @@ git push -u origin main
 
 | Komenda | Co robi |
 | --- | --- |
+| `npm run dev` | serwer deweloperski Next.js na http://localhost:3000 |
+| `npm run build` | produkcyjny build Next.js, ten sam, który uruchamia Vercel |
+| `npm start` | uruchomienie zbudowanej aplikacji |
 | `npm test` | jednorazowe uruchomienie testów vitest |
 | `npm run test:watch` | testy w trybie obserwowania plików |
 | `npm run typecheck` | `tsc --noEmit`, sprawdzenie typów bez kompilacji |
-| `npm run ui` | po fazie 4: serwer `src/server.ts` z ekranem `ui/index.html` na http://localhost:4180 (skrypt dodaje agent w fazie 4) |
-| `npm start -- --help` | uruchomienie `src/cli.ts` przez tsx |
+| `npm run lint` | ESLint z konfiguracją Next.js |
 
 ## Dane
 
-Katalog `dane/` zawiera dwie serie wskaźników w formacie JSON: `polstr-1m.json` (miesięcznie, od lipca 2025) i `wibor-3m.json` (kwartalnie, od 2020). Każdy plik ma pola `wskaznik`, `opis`, `uwaga`, `zrodla` i `wartosci` z listą wpisów `{ "od": "YYYY-MM-DD", "stopa": 0.0355 }`. Stopa jest ułamkiem, nie procentem. Wpis obowiązuje od dnia `od` do dnia przed kolejnym wpisem, a po ostatnim wpisie serii obowiązuje ostatnia znana wartość. Wartości są ilustracyjne i przybliżone, szczegóły w polu `uwaga`. Nie edytuj tych plików w trakcie ćwiczenia, testy je wczytują.
+Katalog `dane/` zawiera dwie serie wskaźników w formacie JSON: `polstr-1m.json` (miesięcznie, od lipca 2025) i `wibor-3m.json` (kwartalnie, od 2020). Każdy plik ma pola `wskaznik`, `opis`, `uwaga`, `zrodla` i `wartosci` z listą wpisów `{ "od": "YYYY-MM-DD", "stopa": 0.0355 }`. Stopa jest ułamkiem, nie procentem. Wpis obowiązuje od dnia `od` do dnia przed kolejnym wpisem, a po ostatnim wpisie serii obowiązuje ostatnia znana wartość. Wartości są ilustracyjne i przybliżone, szczegóły w polu `uwaga`. Nie edytuj tych plików w trakcie ćwiczenia, testy je wczytują. W kodzie serie są dostępne przez `seriaWskaznika()` z `src/dane/wskazniki.ts`.
 
 ## Spec-kit
 
@@ -111,7 +133,11 @@ Jeśli PowerShell odmówi uruchomienia skryptów `.ps1`, wykonaj raz: `Set-Execu
 
 ## Review
 
-Copilot code review czyta `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` i `AGENTS.md` z gałęzi PR. Reguły review dla plików `.ts` są w `.github/instructions/review.instructions.md`, dopisuj tam własne. Skrypty `skrypty/review-pr.sh`, `skrypty/review-pr.ps1` (GitHub) i `skrypty/review-mr.ps1` (GitLab) robią to samo z terminala przez Copilot CLI. Tryb na sucho (`--dry-run` w bash, `-DryRun` w PowerShell) pobiera diff i robi review, ale zamiast publikować komentarz wypisuje go na ekran i zapisuje do `.work/review/review-<numer>.md`, co pozwala przećwiczyć rutynę na publicznym PR prowadzącego: `.\skrypty\review-pr.ps1 agentGreg/harmonogram-polstr-szablon 1 -DryRun`.
+Copilot code review czyta `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` i `AGENTS.md` z gałęzi PR. Reguły review dla plików `.ts` i `.tsx` są w `.github/instructions/review.instructions.md`, dopisuj tam własne. Skrypty `skrypty/review-pr.sh`, `skrypty/review-pr.ps1` (GitHub) i `skrypty/review-mr.ps1` (GitLab) robią to samo z terminala przez Copilot CLI. Tryb na sucho (`--dry-run` w bash, `-DryRun` w PowerShell) pobiera diff i robi review, ale zamiast publikować komentarz wypisuje go na ekran i zapisuje do `.work/review/review-<numer>.md`, co pozwala przećwiczyć rutynę na publicznym PR prowadzącego: `.\skrypty\review-pr.ps1 agentGreg/harmonogram-polstr-szablon 1 -DryRun`.
+
+## Wydanie
+
+Produkcja działa na Vercel i buduje się z GitHuba tym samym `npm run build`, który uruchamia workflow Actions. Push do `main` to nowa wersja produkcyjna, każdy PR ma własny adres podglądu w komentarzu bota Vercel. Kroki i zasada awaryjna w [KARTA.md](KARTA.md).
 
 ## Licencja
 

@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
 jobs:
   testy:
     runs-on: ubuntu-latest
@@ -16,3 +19,4 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run build

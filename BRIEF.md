@@ -20,14 +20,16 @@ Załącznik: `dane/polstr-1m.json`, `dane/wibor-3m.json`.
 
 ### Wyjście
 
-- tabela rat: numer, data, część kapitałowa, część odsetkowa, rata, saldo po spłacie,
-- suma odsetek za cały okres,
-- z CLI: JSON lub CSV,
-- ekran www: formularz parametrów, przycisk „Policz”, rata pierwsza i ostatnia, suma odsetek, tabela rat, eksport CSV.
+- `GET /api/harmonogram` z parametrami w query string zwraca JSON: tabela rat (numer, data, część kapitałowa, część odsetkowa, rata, saldo po spłacie) i suma odsetek za cały okres,
+- ekran www w `app/page.tsx`: formularz parametrów, przycisk „Policz”, rata pierwsza i ostatnia, suma odsetek, tabela rat, eksport CSV po stronie przeglądarki.
 
 ### Ekran
 
-Wygląd ekranu projektujesz sam w Claude Design, w czasie gdy agent implementuje logikę (KARTA.md, tor równoległy). Eksport to jeden plik HTML z CSS i JS, bez frameworka, zapisany jako `ui/index.html`. Logikę podpina agent w fazie 4: mały serwer `src/server.ts` na `node:http` serwuje `ui/` i wystawia `GET /api/harmonogram` z parametrami z formularza, zwracając JSON z tabelą rat. Uruchomienie: `npm run ui`, adres http://localhost:4180. Bez nowych zależności. Obliczenia zostają w module domenowym, serwer tylko parsuje parametry i woła funkcję.
+Wygląd ekranu projektujesz sam w Claude Design, w czasie gdy agent implementuje logikę (KARTA.md, tor równoległy). Eksport to jeden komponent React z Tailwind, bez bibliotek UI, wklejony jako `app/page.tsx` z dyrektywą `'use client'` w pierwszej linii. Dane pobiera przez `fetch('/api/harmonogram?...')` z parametrami formularza w query string. Podpięcie komponentu do route handlera robi agent w fazie 4. Obliczenia zostają w module domenowym `src/domena/`, route handler `app/api/harmonogram/route.ts` tylko parsuje parametry i woła funkcję.
+
+### Wydanie
+
+Produkcja działa na Vercel i buduje się z GitHuba: każdy push do `main` to nowa wersja produkcyjna, każdy PR ma własny adres podglądu w komentarzu bota Vercel. Zaliczenie to mail do prowadzącego z adresem produkcyjnym i adresem repo (szczegóły w KARTA.md, Bramka 3).
 
 ### Reguły
 
@@ -41,7 +43,7 @@ Wygląd ekranu projektujesz sam w Claude Design, w czasie gdy agent implementuje
 
 Wartość wskaźnika na okres bierzemy wprost z danych. Nie składamy dziennych stawek POLSTR wstecz za okres odsetkowy. To temat na gwiazdkę (KARTA.md), nie na MVP.
 
-### Minimalny zestaw testów (vitest)
+### Minimalny zestaw testów (vitest, tylko domena)
 
 1. rata równa przy stałej stopie (liczba kontrolna niżej),
 2. rata malejąca,

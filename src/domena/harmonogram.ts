@@ -1,9 +1,9 @@
 /**
- * Moduł domenowy kalkulatora harmonogramu spłat.
+ * Moduł domenowy kalkulatora harmonogramu spłat: czyste funkcje, bez React i bez I/O.
  *
  * To jest szkielet. Właściwe typy i funkcje powstaną z /speckit-plan
  * i /speckit-implement na podstawie BRIEF.md. Poniższy typ i funkcja
- * są punktem zaczepienia, żeby typecheck i testy działały od pierwszej minuty.
+ * są punktem zaczepienia, żeby typecheck, testy i route handler działały od pierwszej minuty.
  */
 
 export interface ParametryKredytu {
@@ -18,6 +18,6 @@ export interface ParametryKredytu {
   pierwszaRata: string;
 }
 
-export function policzHarmonogram(_parametry: ParametryKredytu): never {
-  throw new Error('nie zaimplementowano: policzHarmonogram');
+export function policzHarmonogram(parametry: ParametryKredytu): never {
+  throw new Error(`nie zaimplementowano: policzHarmonogram (${parametry.liczbaRat} rat, ${parametry.typRat})`);
 }
