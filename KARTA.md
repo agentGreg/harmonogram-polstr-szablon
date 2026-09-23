@@ -105,3 +105,7 @@ Jeśli `--reviewer "@copilot"` przy tworzeniu nie zadziała: `gh pr edit <numer>
 Zakres: jeśli o 14:45 nie masz zielonych testów, zmniejsz zakres do rat równych bez nadpłat i idź do review z tym, co masz. Mały zakres z review i scaleniem jest lepszy niż duży bez.
 
 Vercel: jeśli do 12:10 nie masz konta albo deployu, pracuj lokalnie na `npm run dev`. O 15:30 zrób repo publicznym komendą `gh repo edit --visibility public --accept-visibility-change-consequences` i wyślij prowadzącemu adres repo. Prowadzący zrobi deploy u siebie przez „Import Third-Party Git Repository”.
+
+## Podgląd z PR za logowaniem
+
+Adresy podglądu z komentarza bota Vercel są w planie Hobby chronione logowaniem do Vercel. Ty je zobaczysz, kolega obok nie. Jeśli chcesz pokazać podgląd innym, wyłącz ochronę raz: w projekcie Vercel Settings, Deployment Protection, Vercel Authentication na „Disabled”. Adres produkcyjny jest publiczny bez zmian. Wzór działającego szkieletu: https://harmonogram-polstr-szablon.vercel.app
