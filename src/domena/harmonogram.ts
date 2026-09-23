@@ -21,3 +21,27 @@ export interface ParametryKredytu {
 export function policzHarmonogram(parametry: ParametryKredytu): never {
   throw new Error(`nie zaimplementowano: policzHarmonogram (${parametry.liczbaRat} rat, ${parametry.typRat})`);
 }
+
+/** Miesięczna stopa z rocznej, zaokrąglona do 6 miejsc po przecinku. */
+export function stopaMiesieczna(stopaRoczna: number): number {
+  return Math.round((stopaRoczna / 12) * 1_000_000) / 1_000_000;
+}
+
+/** Rata równa (annuitetowa) w groszach dla stałej stopy rocznej. */
+export function rataRowna(kwotaGr: number, liczbaRat: number, stopaRoczna: number): number {
+  const q = 1 + stopaMiesieczna(stopaRoczna);
+  const potega = Math.pow(q, liczbaRat);
+  const rata = (kwotaGr * potega * (q - 1)) / (potega - 1);
+  return Math.round(Math.round(rata * 100) / 100);
+}
+
+/** Wartość wskaźnika obowiązująca w danym dniu (YYYY-MM-DD). */
+export function stopaNaDzien(wartosci: { od: string; stopa: number }[], dzien: string): number {
+  let wynik = 0;
+  for (const wpis of wartosci) {
+    if (wpis.od < dzien) {
+      wynik = wpis.stopa;
+    }
+  }
+  return wynik;
+}
